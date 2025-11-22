@@ -20,6 +20,14 @@ vim.pack.add({
 	"https://github.com/folke/noice.nvim",
 	"https://github.com/MunifTanjim/nui.nvim",
 	"https://github.com/lewis6991/gitsigns.nvim", -- 添加 gitsigns.nvim
+
+	-- 自动补全
+	"https://github.com/hrsh7th/nvim-cmp",
+	"https://github.com/hrsh7th/cmp-nvim-lsp",
+	"https://github.com/hrsh7th/cmp-buffer",
+	"https://github.com/hrsh7th/cmp-path",
+	"https://github.com/L3MON4D3/LuaSnip", -- 代码片段引擎
+	"https://github.com/saadparwaiz1/cmp_luasnip", -- nvim-cmp 和 LuaSnip 的集成
 })
 
 -- =============================================================================
@@ -32,10 +40,13 @@ vim.cmd([[colorscheme dracula]]) -- 应用颜色方案
 
 -- Treesitter 配置
 require("nvim-treesitter.config").setup({
-	ensure_installed = { "go", "lua", "html", "gotmpl", "gomod", "gdscript", "godot_resource", "gdshader" },
+	ensure_installed = { "go", "lua", "html", "gomod", "rust" },
 	highlight = {
 		enable = true,
 	},
+	indent = { enable = true },
+	incremental_selection = { enable = true }, -- 增量选择
+	context_commentstring = { enable = true }, -- 注释字符串
 })
 
 -- NvimTree (文件树) 配置
@@ -71,3 +82,6 @@ require("noice").setup({
 		lsp_doc_border = false,
 	},
 })
+
+-- 自动补全配置
+require("completion")

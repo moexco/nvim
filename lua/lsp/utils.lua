@@ -46,6 +46,17 @@ M.on_attach = function(client, bufnr)
 	vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
 	vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
 
+	-- 启用 nvim-cmp 的缓冲区本地设置
+	-- 这会为每个 LSP 附加的缓冲区启用自动补全
+	require("cmp").setup.buffer({
+		sources = {
+			{ name = "nvim_lsp" },
+			{ name = "luasnip" },
+			{ name = "buffer" },
+			{ name = "path" },
+		},
+	})
+
 	-- Rust 独有的快捷键
 	vim.keymap.set("n", "<leader>rr", function()
 		vim.cmd("RustLsp runnables")
