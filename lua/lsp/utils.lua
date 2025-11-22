@@ -67,27 +67,299 @@ M.on_attach = function(client, bufnr)
 
     
 
-        vim.keymap.set('n', '<leader>rr', function()
+            vim.keymap.set('n', '<leader>rr', function()
 
     
 
-            vim.cmd('RustLsp runnables')
+                vim.cmd('RustLsp runnables')
 
     
 
-        end, opts)
+            end, opts)
 
     
 
-    end
+        end
 
     
 
-    
+        
 
     
 
-    return M
+        --- 在浮动窗口中显示 LSP 客户端信息
+
+    
+
+        function M.show_lsp_info()
+
+    
+
+            local bufnr = vim.api.nvim_get_current_buf()
+
+    
+
+            local clients = vim.lsp.get_clients({ bufnr = bufnr })
+
+    
+
+        
+
+    
+
+            local info_lines = {}
+
+    
+
+            if next(clients) == nil then
+
+    
+
+                table.insert(info_lines, "No active LSP clients for this buffer.")
+
+    
+
+            else
+
+    
+
+                table.insert(info_lines, "Active LSP Clients for Buffer " .. bufnr .. ":")
+
+    
+
+                table.insert(info_lines, "-------------------------------------")
+
+    
+
+                for _, client in ipairs(clients) do
+
+    
+
+                    table.insert(info_lines, string.format("ID: %d", client.id))
+
+    
+
+                    table.insert(info_lines, string.format("Name: %s", client.name))
+
+    
+
+                    table.insert(info_lines, string.format("Root: %s", client.config and client.config.root_dir or "N/A"))
+
+    
+
+                    table.insert(info_lines, string.format("Status: %s", client.server_capabilities and "Ready" or "Initializing"))
+
+    
+
+                    table.insert(info_lines, string.format("Autostart: %s", client.config and client.config.autostart and "Yes" or "No"))
+
+    
+
+                    table.insert(info_lines, "") -- Add a blank line for readability
+
+    
+
+                end
+
+    
+
+            end
+
+    
+
+        
+
+    
+
+            local max_width = 0
+
+    
+
+            for _, line in ipairs(info_lines) do
+
+    
+
+                local len = vim.fn.strwidth(line)
+
+    
+
+                if len > max_width then
+
+    
+
+                    max_width = len
+
+    
+
+                end
+
+    
+
+            end
+
+    
+
+        
+
+    
+
+            local height = #info_lines + 2 -- +2 for padding
+
+    
+
+            local width = math.min(max_width + 4, vim.o.columns - 4) -- +4 for padding, limit width
+
+    
+
+            
+
+    
+
+            local row = math.floor((vim.o.lines - height) / 2)
+
+    
+
+            local col = math.floor((vim.o.columns - width) / 2)
+
+    
+
+        
+
+    
+
+            local buf = vim.api.nvim_create_buf(false, true)
+
+    
+
+            vim.api.nvim_buf_set_lines(buf, 0, -1, false, info_lines)
+
+    
+
+        
+
+    
+
+            local win_id = vim.api.nvim_open_win(buf, true, {
+
+    
+
+                relative = "editor",
+
+    
+
+                row = row,
+
+    
+
+                col = col,
+
+    
+
+                width = width,
+
+    
+
+                height = height,
+
+    
+
+                border = "rounded",
+
+    
+
+                style = "minimal",
+
+    
+
+                focusable = false,
+
+    
+
+                noautocmd = true,
+
+    
+
+            })
+
+    
+
+        
+
+    
+
+            -- Highlight the border
+
+    
+
+            vim.api.nvim_win_set_option(win_id, "winhl", "Normal:NormalFloat,FloatBorder:FloatBorder")
+
+    
+
+        
+
+    
+
+            -- Close on any key press
+
+    
+
+            vim.api.nvim_create_autocmd("BufWinEnter", {
+
+    
+
+                once = true,
+
+    
+
+                buffer = buf,
+
+    
+
+                callback = function()
+
+    
+
+                    vim.api.nvim_buf_set_keymap(buf, "n", "<buffer>", "<CR>", ":q<CR>", { silent = true })
+
+    
+
+                    vim.api.nvim_buf_set_keymap(buf, "n", "<buffer>", "<Esc>", ":q<CR>", { silent = true })
+
+    
+
+                    vim.api.nvim_buf_set_keymap(buf, "n", "<buffer>", "q", ":q<CR>", { silent = true })
+
+    
+
+                    vim.api.nvim_buf_set_keymap(buf, "n", "<buffer>", "<LeftMouse>", ":q<CR>", { silent = true }) -- Close on click
+
+    
+
+                end,
+
+    
+
+            })
+
+    
+
+        
+
+    
+
+        end
+
+    
+
+        
+
+    
+
+        return M
+
+    
+
+        
 
     
 
