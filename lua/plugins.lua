@@ -10,6 +10,8 @@ vim.pack.add({
 	"https://github.com/nvim-tree/nvim-web-devicons",
 	"https://github.com/numToStr/Navigator.nvim",
 	"https://github.com/windwp/nvim-autopairs",
+	"https://github.com/nvim-lua/plenary.nvim", -- telescope 的依赖
+	"https://github.com/nvim-telescope/telescope.nvim",
 
 	-- 主题
 	"https://github.com/Mofiqul/dracula.nvim",
@@ -89,3 +91,26 @@ require("noice").setup({
 
 -- 自动补全配置
 require("completion")
+
+-- Telescope 配置
+require("telescope").setup({
+	defaults = {
+		mappings = {
+			i = {
+				["<C-u>"] = false,
+				["<C-d>"] = false,
+			},
+		},
+	},
+})
+
+-- 设置 telescope 快捷键
+local builtin = require("telescope.builtin")
+vim.keymap.set("n", "<leader>ff", builtin.find_files, { desc = "查找文件" })
+vim.keymap.set("n", "<leader>fg", builtin.live_grep, { desc = "实时搜索" })
+vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "查找缓冲区" })
+vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "查找帮助标签" })
+
+
+
+

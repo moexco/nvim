@@ -32,15 +32,13 @@ end
 M.on_attach = function(client, bufnr)
 	local opts = { noremap = true, silent = true, buffer = bufnr }
 
-	-- 常用的 LSP 快捷键映射... (此处代码省略，假设与上一份配置相同)
-	vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
-	vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+	-- 常用的 LSP 快捷键映射...
+	-- local telescope_builtin = require("telescope.builtin") -- 暂时注释掉，因为 Telescope LSP 扩展未加载
 	vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-	vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
 	vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, opts)
 	vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
 	vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
-	vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
+
 
 	-- 诊断快捷键
 	vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
