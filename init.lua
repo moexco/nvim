@@ -12,6 +12,9 @@ vim.pack.add({
   { src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
   "https://github.com/nvim-treesitter/nvim-treesitter-context",
   "https://github.com/windwp/nvim-autopairs",
+  -- UI 增强
+  "https://github.com/folke/noice.nvim",
+  "https://github.com/MunifTanjim/nui.nvim",
 })
 
 require("dracula").setup({}) -- 初始化并设置 Dracula 颜色方案 (使用默认配置)
@@ -22,6 +25,33 @@ require("nvim-treesitter.config").setup({
   },
 })
 require("Navigator").setup()
+
+-- 配置 Noice.nvim 以美化 UI
+require("noice").setup({
+  lsp = {
+    progress = {
+      enabled = true,
+      -- an array of views to use for lsp progress
+      -- eg: {"notify", "nui", "fidget"}
+      view = "mini",
+    },
+    -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+    override = {
+      ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+      ["vim.lsp.util.stylize_markdown"] = true,
+      ["cmp.entry.get_documentation"] = true,
+    },
+  },
+  -- you can enable a preset theme here
+  presets = {
+    bottom_search = true, -- use a classic bottom cmdline for search
+    command_palette = true, -- position the cmdline and popupmenu together
+    long_message_to_split = true, -- long messages will be sent to a split
+    inc_rename = false, -- enables an input dialog for inc-rename.nvim
+    lsp_doc_border = false, -- add a border to lsp doc hovers
+  },
+})
+
 
 vim.cmd [[colorscheme dracula]] -- 应用 Dracula 颜色方案
 
