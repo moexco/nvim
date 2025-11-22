@@ -39,94 +39,13 @@ vim.pack.add({
 -- 插件配置
 -- =============================================================================
 
--- Treesitter 配置 (提前，确保优先加载和初始化)
-require("nvim-treesitter.config").setup({
-	ensure_installed = { "go", "lua", "html", "rust" },
-	auto_install = true,
-	highlight = {
-		enable = true,
-	},
-	indent = { enable = true },
-	incremental_selection = { enable = true }, -- 增量选择
-	context_commentstring = { enable = true }, -- 注释字符串
-})
-require("nvim-treesitter") -- 显式 require，确保主模块被加载和初始化
-
--- 主题配置
-require("dracula").setup({})
-vim.cmd([[colorscheme dracula]]) -- 应用颜色方案
-
--- NvimTree (文件树) 配置
-require("nvim-tree").setup({
-	git = {
-		enable = true,
-		ignore = false, -- Set to true to ignore files in .gitignore
-	},
-})
-
--- 其他插件配置
-require("Navigator").setup()
-require("nvim-autopairs").setup() -- 启用自动配对
-
--- Noice.nvim (UI美化) 配置
-require("noice").setup({
-	lsp = {
-		progress = {
-			enabled = true,
-			view = "mini",
-		},
-		override = {
-			["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-			["vim.lsp.util.stylize_markdown"] = true,
-			["cmp.entry.get_documentation"] = true,
-		},
-	},
-	presets = {
-		bottom_search = true,
-		command_palette = true,
-		long_message_to_split = true,
-		inc_rename = false,
-		lsp_doc_border = true,
-	},
-})
-
--- 自动补全配置
+require("config.treesitter")
+require("config.dracula")
+require("config.navigator")
+require("config.autopairs")
+require("config.noice")
+require("config.nvimtree")
+require("config.gitsigns")
 require("completion")
-
--- Telescope 配置
-require("telescope").setup({
-	defaults = {
-		mappings = {
-			i = {
-				["<C-u>"] = false,
-				["<C-d>"] = false,
-			},
-		},
-	},
-})
-
-	-- 设置 telescope 快捷键
-local builtin = require("telescope.builtin")
-vim.keymap.set("n", "<leader>ff", builtin.find_files, { desc = "查找文件" })
-vim.keymap.set("n", "<leader>fg", builtin.live_grep, { desc = "实时搜索" })
-vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "查找缓冲区" })
-vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "查找帮助标签" })
-
--- Which-key 配置
-require("which-key").setup({})
-
--- 为 leader 前缀注册描述
-local wk = require("which-key")
-wk.register({
-  e = { group = "文件树" },
-  f = { group = "查找" },
-  g = { group = "Git" },
-  l = { group = "LSP" },
-  q = { group = "关闭/退出" }, -- 添加 leader+q 的描述
-}, { prefix = "<leader>" })
-
--- 禁用 gc 菜单，并将 gc 指向 gcc (切换行注释)
-vim.keymap.set("n", "gc", "gcc", { desc = "切换行注释" })
-
-
-
+require("config.telescope")
+require("config.whichkey")

@@ -127,17 +127,11 @@ function M.show_lsp_info()
 	-- Highlight the border
 	vim.api.nvim_win_set_option(win_id, "winhl", "Normal:NormalFloat,FloatBorder:FloatBorder")
 
-	-- Close on any key press
-	vim.api.nvim_create_autocmd("BufWinEnter", {
-		once = true,
-		buffer = buf,
-		callback = function()
-			vim.api.nvim_buf_set_keymap(buf, "n", "<buffer>", "<CR>", ":q<CR>", { silent = true })
-			vim.api.nvim_buf_set_keymap(buf, "n", "<buffer>", "<Esc>", ":q<CR>", { silent = true })
-			vim.api.nvim_buf_set_keymap(buf, "n", "<buffer>", "q", ":q<CR>", { silent = true })
-			vim.api.nvim_buf_set_keymap(buf, "n", "<buffer>", "<LeftMouse>", ":q<CR>", { silent = true }) -- Close on click
-		end,
-	})
+	-- Set keymaps for closing the floating window immediately
+	vim.api.nvim_buf_set_keymap(buf, "n", "<CR>", ":q<CR>", { silent = true })
+	vim.api.nvim_buf_set_keymap(buf, "n", "<Esc>", ":q<CR>", { silent = true })
+	vim.api.nvim_buf_set_keymap(buf, "n", "q", ":q<CR>", { silent = true })
+	vim.api.nvim_buf_set_keymap(buf, "n", "<LeftMouse>", ":q<CR>", { silent = true }) -- Close on click
 end
 
 return M

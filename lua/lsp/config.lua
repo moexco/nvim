@@ -88,6 +88,32 @@ local servers = {
     -- Add more servers here if needed
 }
 
+-- LSP 和诊断UI设置
+-- 设置诊断显示符号
+vim.fn.sign_define("LspDiagnosticsSignError", { text = "", texthl = "LspDiagnosticsSignError" })
+vim.fn.sign_define("LspDiagnosticsSignWarning", { text = "", texthl = "LspDiagnosticsSignWarning" })
+vim.fn.sign_define("LspDiagnosticsSignInformation", { text = "", texthl = "LspDiagnosticsSignInformation" })
+vim.fn.sign_define("LspDiagnosticsSignHint", { text = "💡", texthl = "LspDiagnosticsSignHint" })
+
+-- 设置诊断悬浮窗口的配置
+vim.diagnostic.config({
+	virtual_text = true,
+	update_in_insert = false,
+	float = {
+		source = "always",
+		focusable = false,
+		border = "rounded",
+	},
+})
+
+-- LSP 格式化快捷键
+vim.keymap.set("n", "<leader>lf", vim.lsp.buf.format, { desc = "LSP 格式化代码" })
+
+-- 显示 LSP 信息 (现在使用浮动窗口)
+vim.keymap.set("n", "<leader>li", function()
+	require("lsp.utils").show_lsp_info()
+end, { desc = "显示 LSP 客户端信息 (浮动窗口)" })
+
 -- 创建一个 AutoCommand Group，方便管理和清除
 local lsp_augroup = vim.api.nvim_create_augroup("CustomLspConfig", { clear = true })
 
@@ -110,14 +136,6 @@ vim.api.nvim_create_autocmd("FileType", {
                 root_dir = root_dir,
                 on_attach = function(client, bufnr)
                     lsp_utils.on_attach(client, bufnr)
-                    -- 可以添加特定于当前 LSP 客户端的设置
-                    if filetype == "rust" then
-                        -- rust-analyzer specific settings
-                    elseif filetype == "go" then
-                        -- gopls specific settings
-                    elseif filetype == "lua" then
-                        -- lua_ls specific settings
-                    end
                 end,
                 bufnr = args.buf,
             })
