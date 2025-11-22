@@ -5,31 +5,31 @@ luasnip.setup({})
 
 -- Updated kind_icons for better representation
 local kind_icons = {
-  Text = " ",
-  Method = " ",
-  Function = " ",
-  Constructor = " ",
-  Field = " ",
-  Variable = " ",
-  Class = " ",
-  Interface = " ",
-  Module = " ",
-  Property = " ",
-  Unit = " ",
-  Value = " ",
-  Enum = " ",
-  Keyword = " ",
-  Snippet = " ",
-  Color = " ",
-  File = " ",
-  Reference = " ",
-  Folder = " ",
-  EnumMember = " ",
-  Constant = " ",
-  Struct = " ",
-  Event = " ",
-  Operator = " ",
-  TypeParameter = " ",
+	Text = " ",
+	Method = " ",
+	Function = " ",
+	Constructor = " ",
+	Field = " ",
+	Variable = " ",
+	Class = " ",
+	Interface = " ",
+	Module = " ",
+	Property = " ",
+	Unit = " ",
+	Value = " ",
+	Enum = " ",
+	Keyword = " ",
+	Snippet = " ",
+	Color = " ",
+	File = " ",
+	Reference = " ",
+	Folder = " ",
+	EnumMember = " ",
+	Constant = " ",
+	Struct = " ",
+	Event = " ",
+	Operator = " ",
+	TypeParameter = " ",
 }
 
 cmp.setup({
@@ -62,7 +62,7 @@ cmp.setup({
 			-- 添加类型图标和名称
 			-- kind_icons[vim_item.kind] 此时为 " "，所以这里会显示 " KindName" 或 " TypeDetail"
 			vim_item.kind = string.format("%s %s", kind_icons[vim_item.kind], kind_text)
-			
+
 			-- 添加来源信息
 			vim_item.menu = ({
 				nvim_lsp = "[LSP]",
@@ -70,12 +70,12 @@ cmp.setup({
 				buffer = "[Buffer]",
 				path = "[Path]",
 			})[entry.source.name]
-			
+
 			-- 格式化最终显示的字符串，将 kind 和 menu 放在 abbr 后面
 			-- 使用一个空格作为分隔，确保视觉上的分离
 			vim_item.menu = (vim_item.menu and " " .. vim_item.menu or "")
 			vim_item.kind = (vim_item.kind and " " .. vim_item.kind or "")
-			
+
 			return vim_item
 		end,
 	},

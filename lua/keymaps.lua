@@ -14,4 +14,3 @@ vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "切换到右侧窗口" })
 -- 全局快捷键
 vim.keymap.set("n", "<leader>q", ":qa<CR>", { desc = "关闭所有缓冲区并退出程序" })
 vim.keymap.set("n", "<C-s>", ":w<CR>", { desc = "保存当前缓冲区" })
-

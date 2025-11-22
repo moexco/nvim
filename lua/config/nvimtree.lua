@@ -10,3 +10,4 @@ require("nvim-tree").setup({
 
 -- 切换文件树
 vim.keymap.set("n", "<leader>e", ":NvimTreeToggle<CR>", { desc = "切换文件树" })
+

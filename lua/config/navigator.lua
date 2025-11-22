@@ -2,3 +2,4 @@
 -- Navigator 插件配置
 
 require("Navigator").setup()
+

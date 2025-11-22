@@ -19,3 +19,4 @@ vim.keymap.set("n", "<leader>gs", ":Gitsigns stage_hunk<CR>", { desc = "暂存�
 vim.keymap.set("n", "<leader>gr", ":Gitsigns reset_hunk<CR>", { desc = "回滚当前修改块" })
 vim.keymap.set("n", "<leader>gp", ":Gitsigns preview_hunk<CR>", { desc = "预览当前修改块" })
 vim.keymap.set("n", "<leader>gb", ":Gitsigns blame_line<CR>", { desc = "查看当前行归属" })
+

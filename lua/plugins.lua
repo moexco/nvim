@@ -31,7 +31,7 @@ vim.pack.add({
 	"https://github.com/hrsh7th/cmp-nvim-lsp",
 	"https://github.com/hrsh7th/cmp-buffer",
 	"https://github.com/hrsh7th/cmp-path",
-	"https://github.com/L3MON4D3/LuaSnip", -- 代码片段引擎
+	"https://github.com/L3MON4D3/LuaSnip",  -- 代码片段引擎
 	"https://github.com/saadparwaiz1/cmp_luasnip", -- nvim-cmp 和 LuaSnip 的集成
 })
 

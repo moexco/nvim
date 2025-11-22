@@ -8,6 +8,6 @@ require("nvim-treesitter").install({ 'rust', 'go', 'lua' })
 
 
 vim.api.nvim_create_autocmd('FileType', {
-  pattern = { 'rust', 'go', 'lua' },
-  callback = function() vim.treesitter.start() end,
+	pattern = { 'rust', 'go', 'lua' },
+	callback = function() vim.treesitter.start() end,
 })
