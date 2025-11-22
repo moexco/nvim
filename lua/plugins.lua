@@ -24,6 +24,7 @@ vim.pack.add({
 	"https://github.com/folke/noice.nvim",
 	"https://github.com/MunifTanjim/nui.nvim",
 	"https://github.com/lewis6991/gitsigns.nvim", -- 添加 gitsigns.nvim
+	"https://github.com/folke/which-key.nvim",
 
 	-- 自动补全
 	"https://github.com/hrsh7th/nvim-cmp",
@@ -104,13 +105,28 @@ require("telescope").setup({
 	},
 })
 
--- 设置 telescope 快捷键
+	-- 设置 telescope 快捷键
 local builtin = require("telescope.builtin")
 vim.keymap.set("n", "<leader>ff", builtin.find_files, { desc = "查找文件" })
 vim.keymap.set("n", "<leader>fg", builtin.live_grep, { desc = "实时搜索" })
 vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "查找缓冲区" })
 vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "查找帮助标签" })
 
+-- Which-key 配置
+require("which-key").setup({})
+
+-- 为 leader 前缀注册描述
+local wk = require("which-key")
+wk.register({
+  e = { group = "文件树" },
+  f = { group = "查找" },
+  g = { group = "Git" },
+  l = { group = "LSP" },
+  q = { group = "关闭/退出" }, -- 添加 leader+q 的描述
+}, { prefix = "<leader>" })
+
+-- 禁用 gc 菜单，并将 gc 指向 gcc (切换行注释)
+vim.keymap.set("n", "gc", "gcc", { desc = "切换行注释" })
 
 
 

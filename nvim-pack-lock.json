@@ -1,5 +1,9 @@
 {
   "plugins": {
+    "Comment.nvim": {
+      "rev": "e30b7f2008e52442154b66f7c519bfd2f1e32acb",
+      "src": "https://github.com/numToStr/Comment.nvim"
+    },
     "LuaSnip": {
       "rev": "3732756842a2f7e0e76a7b0487e9692072857277",
       "src": "https://github.com/L3MON4D3/LuaSnip"
@@ -72,6 +76,10 @@
     "telescope.nvim": {
       "rev": "83a3a713d6b2d2a408491a1b959e55a7fa8678e8",
       "src": "https://github.com/nvim-telescope/telescope.nvim"
+    },
+    "which-key.nvim": {
+      "rev": "3aab2147e74890957785941f0c1ad87d0a44c15a",
+      "src": "https://github.com/folke/which-key.nvim"
     }
   }
 }

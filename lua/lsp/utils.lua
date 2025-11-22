@@ -34,10 +34,17 @@ M.on_attach = function(client, bufnr)
 
 	-- 常用的 LSP 快捷键映射...
 	-- local telescope_builtin = require("telescope.builtin") -- 暂时注释掉，因为 Telescope LSP 扩展未加载
-	vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-	vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, opts)
-	vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
-	vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
+	vim.keymap.set("n", "K", vim.lsp.buf.hover, { noremap = true, silent = true, buffer = bufnr, desc = "显示悬浮文档" })
+	vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, { noremap = true, silent = true, buffer = bufnr, desc = "显示函数签名" })
+	vim.keymap.set("n", "<leader>lr", vim.lsp.buf.rename, { noremap = true, silent = true, buffer = bufnr, desc = "LSP 重命名" })
+	vim.keymap.set("n", "<leader>lc", vim.lsp.buf.code_action, { noremap = true, silent = true, buffer = bufnr, desc = "LSP 代码动作" })
+
+	-- LSP Go To 系列快捷键 (G 开头)
+	vim.keymap.set("n", "gd", vim.lsp.buf.definition, { noremap = true, silent = true, buffer = bufnr, desc = "跳转到定义" })
+	vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { noremap = true, silent = true, buffer = bufnr, desc = "跳转到声明" })
+	vim.keymap.set("n", "gi", vim.lsp.buf.implementation, { noremap = true, silent = true, buffer = bufnr, desc = "跳转到实现" })
+	vim.keymap.set("n", "gt", vim.lsp.buf.type_definition, { noremap = true, silent = true, buffer = bufnr, desc = "跳转到类型定义" })
+	vim.keymap.set("n", "gr", vim.lsp.buf.references, { noremap = true, silent = true, buffer = bufnr, desc = "查找引用" })
 
 
 	-- 诊断快捷键
@@ -56,9 +63,9 @@ M.on_attach = function(client, bufnr)
 	})
 
 	-- Rust 独有的快捷键
-	vim.keymap.set("n", "<leader>rr", function()
+	vim.keymap.set("n", "<leader>lR", function()
 		vim.cmd("RustLsp runnables")
-	end, opts)
+	end, { noremap = true, silent = true, buffer = bufnr, desc = "RustLSP 可运行项" })
 end
 
 --- 在浮动窗口中显示 LSP 客户端信息
