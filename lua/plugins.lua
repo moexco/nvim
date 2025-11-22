@@ -19,6 +19,7 @@ vim.pack.add({
   -- UI 增强
   "https://github.com/folke/noice.nvim",
   "https://github.com/MunifTanjim/nui.nvim",
+  "https://github.com/lewis6991/gitsigns.nvim", -- 添加 gitsigns.nvim
 })
 
 -- =============================================================================
@@ -38,7 +39,12 @@ require("nvim-treesitter.config").setup({
 })
 
 -- NvimTree (文件树) 配置
-require("nvim-tree").setup({})
+require("nvim-tree").setup({
+  git = {
+    enable = true,
+    ignore = false, -- Set to true to ignore files in .gitignore
+  },
+})
 
 -- 其他插件配置
 require("Navigator").setup()

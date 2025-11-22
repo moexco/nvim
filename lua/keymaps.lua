@@ -24,6 +24,23 @@ vim.keymap.set('n', '<C-l>', '<C-w>l', { desc = '切换到右侧窗口' })
 vim.keymap.set('n', '<C-q>', ':qa<CR>', { desc = '关闭所有缓冲区并退出' })
 vim.keymap.set('n', '<C-s>', ':w<CR>', { desc = '保存当前缓冲区' })
 
+-- Gitsigns 快捷键
+vim.keymap.set('n', ']g', function()
+  if vim.wo.diff then return ']c' end
+  vim.wo.cursorline = true
+  require('gitsigns').next_hunk()
+end, { desc = '下一个 Git hunk' })
+vim.keymap.set('n', '[g', function()
+  if vim.wo.diff then return '[c' end
+  vim.wo.cursorline = true
+  require('gitsigns').prev_hunk()
+end, { desc = '上一个 Git hunk' })
+vim.keymap.set('n', '<leader>gs', ':Gitsigns stage_hunk<CR>', { desc = 'Stage current hunk' })
+vim.keymap.set('n', '<leader>gr', ':Gitsigns reset_hunk<CR>', { desc = 'Reset current hunk' })
+vim.keymap.set('n', '<leader>gp', ':Gitsigns preview_hunk<CR>', { desc = 'Preview current hunk' })
+vim.keymap.set('n', '<leader>gb', ':Gitsigns blame_line<CR>', { desc = 'Blame current line' })
+
+
 
 
 
