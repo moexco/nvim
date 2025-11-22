@@ -5,31 +5,31 @@ luasnip.setup({})
 
 -- Updated kind_icons for better representation
 local kind_icons = {
-  Text = "",
-  Method = "",
-  Function = "",
-  Constructor = "",
-  Field = "ﰠ", -- Changed from AddField to a more appropriate icon for Field
-  Variable = "", -- Changed from " uniquely identifie" to a variable icon
-  Class = "ﴫ",
-  Interface = "ﰮ",
-  Module = "",
-  Property = "ﰠ",
-  Unit = "塞",
-  Value = "",
-  Enum = "",
-  Keyword = "",
-  Snippet = "",
-  Color = "",
-  File = "",
-  Reference = "",
-  Folder = "",
-  EnumMember = "",
-  Constant = "",
-  Struct = "",
-  Event = "醙",
-  Operator = "",
-  TypeParameter = "",
+  Text = " ",
+  Method = " ",
+  Function = " ",
+  Constructor = " ",
+  Field = " ",
+  Variable = " ",
+  Class = " ",
+  Interface = " ",
+  Module = " ",
+  Property = " ",
+  Unit = " ",
+  Value = " ",
+  Enum = " ",
+  Keyword = " ",
+  Snippet = " ",
+  Color = " ",
+  File = " ",
+  Reference = " ",
+  Folder = " ",
+  EnumMember = " ",
+  Constant = " ",
+  Struct = " ",
+  Event = " ",
+  Operator = " ",
+  TypeParameter = " ",
 }
 
 cmp.setup({
@@ -41,6 +41,10 @@ cmp.setup({
 	window = {
 		completion = {
 			max_height = 5, -- 限制补全列表显示的最大高度为 5
+			border = 'rounded', -- 添加圆角边框
+		},
+		documentation = { -- 也为文档窗口添加边框以保持一致性
+			border = 'rounded',
 		},
 	},
 	formatting = {
@@ -53,8 +57,11 @@ cmp.setup({
 				vim_item.abbr = string.sub(vim_item.abbr, 1, max_abbr_width - 3) .. "..."
 			end
 
+			local kind_text = entry.data and entry.data.detail or vim_item.kind
+
 			-- 添加类型图标和名称
-			vim_item.kind = string.format("%s %s", kind_icons[vim_item.kind], vim_item.kind)
+			-- kind_icons[vim_item.kind] 此时为 " "，所以这里会显示 " KindName" 或 " TypeDetail"
+			vim_item.kind = string.format("%s %s", kind_icons[vim_item.kind], kind_text)
 			
 			-- 添加来源信息
 			vim_item.menu = ({

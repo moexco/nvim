@@ -1,6 +1,8 @@
 -- lua/options.lua
 -- 该文件包含 Neovim 的全局设置和选项
 
+vim.cmd("filetype plugin indent on")
+
 -- 基本编辑体验
 vim.opt.relativenumber = true -- 启用相对行号 (Relative Line Numbers)，方便移动
 vim.opt.number = true -- 启用绝对行号 (Absolute Line Numbers)

@@ -1,6 +1,8 @@
 -- lua/plugins.lua
 -- 该文件用于声明和配置所有插件
 
+vim.loader.enable() -- 启用 Neovim 的 Lua 模块加载器优化
+
 -- 使用 Neovim 0.12+ 内置的包管理器
 vim.pack.add({
 	-- 基础功能
@@ -34,13 +36,10 @@ vim.pack.add({
 -- 插件配置
 -- =============================================================================
 
--- 主题配置
-require("dracula").setup({})
-vim.cmd([[colorscheme dracula]]) -- 应用颜色方案
-
--- Treesitter 配置
+-- Treesitter 配置 (提前，确保优先加载和初始化)
 require("nvim-treesitter.config").setup({
-	ensure_installed = { "go", "lua", "html", "gomod", "rust" },
+	ensure_installed = { "go", "lua", "html", "rust" },
+	auto_install = true,
 	highlight = {
 		enable = true,
 	},
@@ -48,6 +47,11 @@ require("nvim-treesitter.config").setup({
 	incremental_selection = { enable = true }, -- 增量选择
 	context_commentstring = { enable = true }, -- 注释字符串
 })
+require("nvim-treesitter") -- 显式 require，确保主模块被加载和初始化
+
+-- 主题配置
+require("dracula").setup({})
+vim.cmd([[colorscheme dracula]]) -- 应用颜色方案
 
 -- NvimTree (文件树) 配置
 require("nvim-tree").setup({
@@ -79,7 +83,7 @@ require("noice").setup({
 		command_palette = true,
 		long_message_to_split = true,
 		inc_rename = false,
-		lsp_doc_border = false,
+		lsp_doc_border = true,
 	},
 })
 
