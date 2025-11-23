@@ -19,3 +19,9 @@ vim.keymap.set("n", "<C-s>", ":w<CR>", { desc = "保存当前缓冲区" })
 vim.keymap.set("n", "<leader>bn", ":BufferLineCycleNext<CR>", { desc = "切换到下一个缓冲区" })
 vim.keymap.set("n", "<leader>bp", ":BufferLineCyclePrev<CR>", { desc = "切换到上一个缓冲区" })
 vim.keymap.set("n", "<leader>bd", ":bdelete!<CR>", { desc = "关闭当前缓冲区" })
+
+-- Telescope Git 快捷键
+vim.keymap.set("n", "<leader>fg", function()
+	require("telescope.builtin").git_files()
+end, { desc = "查找 Git 已修改的文件" })
+
