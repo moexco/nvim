@@ -4,12 +4,13 @@
 -- Telescope 配置
 require("telescope").setup({
 	defaults = {
-		mappings = {
-			i = {
-				["<C-u>"] = false,
-				["<C-d>"] = false,
-			},
-		},
+		layout_config = { prompt_position = "top" }, -- 将搜索框放在顶部
+		-- mappings = {
+		-- 	i = {
+		-- 		["<C-u>"] = false,
+		-- 		["<C-d>"] = false,
+		-- 	},
+		-- },
 	},
 })
 
