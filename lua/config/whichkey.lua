@@ -13,6 +13,7 @@ wk.add({
 	{ "<leader>l", group = "LSP" },
 	{ "<leader>li", desc = "显示 LSP 客户端信息" },
 	{ "<leader>q", group = "关闭/退出" },
+	{ "<leader>t", desc = "切换终端" },
 	{ "<leader>b", group = "缓冲区" },
 	{ "<leader>bn", desc = "下一个缓冲区" },
 	{ "<leader>bp", desc = "上一个缓冲区" },

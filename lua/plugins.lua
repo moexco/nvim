@@ -26,6 +26,7 @@ vim.pack.add({
 	"https://github.com/lewis6991/gitsigns.nvim", -- 添加 gitsigns.nvim
 	"https://github.com/folke/which-key.nvim",
 	"https://github.com/akinsho/bufferline.nvim", -- 添加 bufferline.nvim，用于缓冲区管理
+	"https://github.com/akinsho/toggleterm.nvim", -- 添加 toggleterm.nvim 用于终端管理
 
 	-- 自动补全
 	"https://github.com/hrsh7th/nvim-cmp",
@@ -51,3 +52,4 @@ require("completion")
 require("config.telescope")
 require("config.whichkey")
 require("config.bufferline")
+require("config.toggleterm")
