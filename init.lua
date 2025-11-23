@@ -13,5 +13,8 @@ require("keymaps")
 -- 加载 LSP (语言服务器协议) 相关配置
 require("lsp.config")
 
+-- 加载 LSP 重启命令
+require("lsp.restart_lsp")
+
 -- 加载自定义补全配置
 require("utils.completion_loader").setup()
