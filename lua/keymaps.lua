@@ -14,3 +14,8 @@ vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "切换到右侧窗口" })
 -- 全局快捷键
 vim.keymap.set("n", "<leader>q", ":qa<CR>", { desc = "关闭所有缓冲区并退出程序" })
 vim.keymap.set("n", "<C-s>", ":w<CR>", { desc = "保存当前缓冲区" })
+
+-- Bufferline 快捷键
+vim.keymap.set("n", "<leader>bn", ":BufferLineCycleNext<CR>", { desc = "切换到下一个缓冲区" })
+vim.keymap.set("n", "<leader>bp", ":BufferLineCyclePrev<CR>", { desc = "切换到上一个缓冲区" })
+vim.keymap.set("n", "<leader>bd", ":bdelete!<CR>", { desc = "关闭当前缓冲区" })
