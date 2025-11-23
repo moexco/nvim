@@ -32,6 +32,8 @@ end
 M.on_attach = function(client, bufnr)
 	local opts = { noremap = true, silent = true, buffer = bufnr }
 
+	local telescope_builtin = require("telescope.builtin")
+
 	-- 常用的 LSP 快捷键映射...
 	-- local telescope_builtin = require("telescope.builtin") -- 暂时注释掉，因为 Telescope LSP 扩展未加载
 	vim.keymap.set("n", "K", vim.lsp.buf.hover, { noremap = true, silent = true, buffer = bufnr, desc = "显示悬浮文档" })
@@ -43,16 +45,16 @@ M.on_attach = function(client, bufnr)
 		{ noremap = true, silent = true, buffer = bufnr, desc = "LSP 代码动作" })
 
 	-- LSP Go To 系列快捷键 (G 开头)
-	vim.keymap.set("n", "gd", vim.lsp.buf.definition,
-		{ noremap = true, silent = true, buffer = bufnr, desc = "跳转到定义" })
+	vim.keymap.set("n", "gd", telescope_builtin.lsp_definitions,
+		{ noremap = true, silent = true, buffer = bufnr, desc = "跳转到定义 (Telescope)" })
 	vim.keymap.set("n", "gD", vim.lsp.buf.declaration,
 		{ noremap = true, silent = true, buffer = bufnr, desc = "跳转到声明" })
-	vim.keymap.set("n", "gi", vim.lsp.buf.implementation,
-		{ noremap = true, silent = true, buffer = bufnr, desc = "跳转到实现" })
-	vim.keymap.set("n", "gt", vim.lsp.buf.type_definition,
-		{ noremap = true, silent = true, buffer = bufnr, desc = "跳转到类型定义" })
-	vim.keymap.set("n", "gr", vim.lsp.buf.references,
-		{ noremap = true, silent = true, buffer = bufnr, desc = "查找引用" })
+	vim.keymap.set("n", "gi", telescope_builtin.lsp_implementations,
+		{ noremap = true, silent = true, buffer = bufnr, desc = "跳转到实现 (Telescope)" })
+	vim.keymap.set("n", "gt", telescope_builtin.lsp_type_definitions,
+		{ noremap = true, silent = true, buffer = bufnr, desc = "跳转到类型定义 (Telescope)" })
+	vim.keymap.set("n", "gr", telescope_builtin.lsp_references,
+		{ noremap = true, silent = true, buffer = bufnr, desc = "查找引用 (Telescope)" })
 
 
 	-- 诊断快捷键
