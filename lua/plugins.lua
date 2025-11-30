@@ -28,6 +28,10 @@ vim.pack.add({
 	"https://github.com/akinsho/bufferline.nvim", -- 添加 bufferline.nvim，用于缓冲区管理
 	"https://github.com/akinsho/toggleterm.nvim", -- 添加 toggleterm.nvim 用于终端管理
 
+	-- Markdown 增强
+	"https://github.com/MeanderingProgrammer/render-markdown.nvim",
+	"https://github.com/3rd/image.nvim",
+
 	-- 自动补全
 	"https://github.com/hrsh7th/nvim-cmp",
 	"https://github.com/hrsh7th/cmp-nvim-lsp",
@@ -53,3 +57,4 @@ require("config.telescope")
 require("config.whichkey")
 require("config.bufferline")
 require("config.toggleterm")
+require("config.markdown")
