@@ -2,6 +2,8 @@
 -- 该文件用于配置和启动 LSP 客户端
 
 local lsp_utils = require("lsp.utils")
+-- 获取 cmp-nvim-lsp 提供的默认能力集 (用于告知 LSP 服务器我们支持补全、代码片段等)
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 -- 通用的根目录查找函数
 -- 尝试查找 git 仓库根目录，如果没有则返回当前文件所在目录
@@ -135,6 +137,7 @@ vim.api.nvim_create_autocmd("FileType", {
 				cmd = server_config.cmd,
 				settings = server_config.settings,
 				root_dir = root_dir,
+				capabilities = capabilities, -- 注入 capabilities，解决诊断不同步问题
 				on_attach = function(client, bufnr)
 					lsp_utils.on_attach(client, bufnr)
 				end,
