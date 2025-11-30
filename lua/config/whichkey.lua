@@ -18,4 +18,5 @@ wk.add({
 	{ "<leader>bn", desc = "下一个缓冲区" },
 	{ "<leader>bp", desc = "上一个缓冲区" },
 	{ "<leader>bd", desc = "关闭当前缓冲区" },
+	{ "<leader>p", group = "插件管理" },
 })

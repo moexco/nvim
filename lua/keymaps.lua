@@ -51,3 +51,17 @@ vim.keymap.set("n", "<leader>fg", function()
 	require("telescope.builtin").git_files()
 end, { desc = "查找 Git 已修改的文件" })
 
+-- 插件管理快捷键
+vim.keymap.set("n", "<leader>pd", function()
+	require("utils.plugin_manager").detect_broken_plugins()
+end, { desc = "扫描并修复损坏的插件" })
+
+vim.keymap.set("n", "<leader>pr", function()
+	require("utils.plugin_manager").reinstall_all()
+end, { desc = "重装所有插件 (清除数据)" })
+
+vim.keymap.set("n", "<leader>ph", function()
+	require("utils.plugin_manager").check_health()
+end, { desc = "检查健康状况 (CheckHealth)" })
+
+
