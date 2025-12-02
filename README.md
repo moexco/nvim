@@ -4,45 +4,42 @@
 
 ## 📋 前置要求
 
-在使用此配置之前，请确保您的系统满足以下要求：
+在使用此配置之前，请确保您的系统满足以下要求。建议使用包管理器一次性安装所有依赖。
 
-### 核心组件
-*   **Neovim:** 需要版本 **0.12.0+** 。
-*   **Nerd Font:** 需要安装并配置 Nerd Font (如 JetBrainsMono Nerd Font, Hack Nerd Font) 以正确显示图标。
-*   **C 编译器:** `gcc` 或 `clang` (编译 Treesitter 解析器时必须)。
+### 💻 依赖安装指南 (以 Arch Linux 为例)
 
-### 工具与依赖
-*   **Ripgrep (`rg`):** Telescope 的 `live_grep` (实时搜索) 功能需要此工具。
-*   **fd:** (可选但强烈推荐) 用于 Telescope 加速文件查找并更好处理 `.gitignore`。
-    *   **Arch Linux:** `sudo pacman -S fd`
-    *   **Ubuntu/Debian:** `sudo apt install fd-find` (注意: 可能需要建个软链接 `ln -s $(which fdfind) ~/.local/bin/fd`)
-    *   **MacOS:** `brew install fd`
-*   **剪贴板工具:** Linux 下需要 `xclip` 或 `wl-copy`，macOS 自带 `pbcopy` (配置已启用 `unnamedplus` 以支持系统剪贴板)。
+运行以下命令以安装所有核心组件、语言服务器 (Go, Rust, Lua)、搜索工具以及图片渲染所需的库：
 
-### LSP 语言服务器
-如果您的 PATH 环境变量中包含以下服务器，此配置会自动启动它们：
-*   **Rust:** `rust-analyzer`
-*   **Go:** `gopls`
-*   **Lua:** `lua-language-server`
+```bash
+# 1. 安装核心依赖、LSP 和图像处理库
+sudo pacman -Sy git gcc go rustup lua-language-server fd ripgrep imagemagick luarocks
 
-### 🖼️ 图片支持 (重要事项)
-本配置使用 [image.nvim](https://github.com/3rd/image.nvim) 在 Markdown 中直接渲染图片。
+# 2. 安装 Lua 图片处理绑定 (用于 image.nvim)
+# 注意: Neovim 使用 LuaJIT (兼容 Lua 5.1)，必须指定版本
+sudo luarocks --lua-version=5.1 install magick
+```
 
-**1. 系统依赖库:**
-您需要安装 ImageMagick 7.x (推荐) 或 6.x。
-*   **Ubuntu/Debian:** `sudo apt install imagemagick libmagickwand-dev`
-*   **MacOS:** `brew install imagemagick`
-*   **Arch:** `sudo pacman -S imagemagick`
+### 📦 依赖详情说明
 
-**2. Tmux 配置 (关键):**
-如果您在 Tmux 中运行 Neovim，**必须**在您的 `~/.tmux.conf` 中开启视觉内容直通，否则会报错：
+*   **核心:** `neovim` (v0.12+), `git`, `gcc` (编译 Treesitter 需要)。
+*   **LSP:** `rust-analyzer` (Rust), `gopls` (Go), `lua-language-server` (Lua)。
+*   **搜索:** `ripgrep` (内容搜索), `fd` (文件查找)。
+*   **图片:** `imagemagick` + `magick` (Lua rock) 用于在 Markdown 中渲染图片。
+
+### ⚠️ 重要配置事项
+
+**1. 字体:**
+请安装并配置 **Nerd Font** (如 `ttf-jetbrains-mono-nerd`) 以正确显示图标。
+
+**2. Tmux 用户:**
+如果您在 Tmux 中运行 Neovim，**必须**在 `~/.tmux.conf` 中开启视觉内容直通，否则图片无法显示：
 ```tmux
 set -g allow-passthrough on
 ```
 *添加此行后，请运行 `tmux source ~/.tmux.conf` 并重启您的 Tmux 会话以使配置生效。*
 
-**3. 终端支持:**
-请使用支持图形协议的现代终端模拟器 (例如: **Kitty**, **WezTerm**, **Ghostty**, **iTerm2**, 或 **Konsole**)。
+**3. 终端模拟器:**
+建议使用支持图形协议的现代终端 (如 **Kitty**, **WezTerm**, **Ghostty**, **Konsole**) 以获得最佳图片预览体验。
 
 ## 🛠️ 安装步骤
 
@@ -79,7 +76,7 @@ alias moevim="NVIM_APPNAME=moevim nvim"
 该实例将读取 `~/.config/moevim` 下的配置，数据存储在 `~/.local/share/moevim`。
 您可以将现有的 nvim 配置复制过去作为起点：
 ```bash
-cp -r ~/.config/nvim ~/.config/moevim
+git clone https://github.com/moexco/nvim ~/.config/moevim
 ```
 
 **注意:** 首次启动 `moevim` 时，它会像全新安装一样重新下载所有插件。如果遇到插件下载不完整导致报错（如 `module 'luasnip' not found`），可以使用内置的插件管理修复功能（快捷键 `<leader>p`）或手动清除 `~/.local/share/moevim` 目录。
