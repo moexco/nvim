@@ -1,7 +1,10 @@
 local cmp = require("cmp")
 local luasnip = require("luasnip")
 
-luasnip.setup({})
+luasnip.setup({
+	region_check_events = "InsertEnter,CursorMoved",
+	delete_check_events = "TextChanged",
+})
 
 -- Updated kind_icons for better representation
 local kind_icons = {
