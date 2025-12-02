@@ -47,7 +47,11 @@ local servers = {
 				usePlaceholders = true,
 				analyses = {
 					unusedparams = true,
+					-- 开启 staticcheck 类似 golangci-lint 的静态分析
+					staticcheck = true,
 				},
+				-- 使用 gofumpt (更严格的 gofmt)
+				gofumpt = true,
 			},
 		},
 		root_dir = function(fname)
@@ -148,6 +152,11 @@ vim.api.nvim_create_autocmd("FileType", {
 				root_dir = root_dir,
 				capabilities = capabilities, -- 注入 capabilities，解决诊断不同步问题
 				on_attach = function(client, bufnr)
+					-- Go 特有的保存自动动作
+					if filetype == "go" then
+						lsp_utils.setup_go_organize_imports(bufnr)
+					end
+
 					lsp_utils.on_attach(client, bufnr)
 				end,
 				bufnr = args.buf,

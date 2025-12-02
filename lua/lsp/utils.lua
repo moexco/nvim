@@ -161,5 +161,28 @@ function M.show_lsp_info()
 	vim.api.nvim_buf_set_keymap(buf, "n", "<LeftMouse>", ":q<CR>", { silent = true }) -- Close on click
 end
 
+-- [[ 4. Go Organize Imports 辅助函数 ]]
+function M.setup_go_organize_imports(bufnr)
+	vim.api.nvim_create_autocmd("BufWritePre", {
+		buffer = bufnr,
+		callback = function()
+			-- 1. 组织 imports (移除未使用的, 排序)
+			local params = vim.lsp.util.make_range_params()
+			params.context = { only = { "source.organizeImports" } }
+			local result = vim.lsp.buf_request_sync(bufnr, "textDocument/codeAction", params, 1000)
+			for cid, res in pairs(result or {}) do
+				for _, r in pairs(res.result or {}) do
+					if r.edit then
+						local enc = (vim.lsp.get_client_by_id(cid) or {}).offset_encoding or "utf-16"
+						vim.lsp.util.apply_workspace_edit(r.edit, enc)
+					end
+				end
+			end
+			-- 2. 格式化
+			vim.lsp.buf.format({ async = false })
+		end,
+	})
+end
+
 return M
 
