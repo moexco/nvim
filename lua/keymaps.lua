@@ -49,6 +49,10 @@ vim.keymap.set("n", "L", "]b", { desc = "切换到下一个缓冲区", remap = t
 -- Telescope Git 快捷键
 vim.keymap.set("n", "<leader>fg", function()
 	require("telescope.builtin").git_files()
+end, { desc = "查找 Git 仓库文件" })
+
+vim.keymap.set("n", "<leader>gc", function()
+	require("telescope.builtin").git_status()
 end, { desc = "查找 Git 已修改的文件" })
 
 -- 插件管理快捷键
