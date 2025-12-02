@@ -13,6 +13,10 @@
 
 ### 工具与依赖
 *   **Ripgrep (`rg`):** Telescope 的 `live_grep` (实时搜索) 功能需要此工具。
+*   **fd:** (可选但强烈推荐) 用于 Telescope 加速文件查找并更好处理 `.gitignore`。
+    *   **Arch Linux:** `sudo pacman -S fd`
+    *   **Ubuntu/Debian:** `sudo apt install fd-find` (注意: 可能需要建个软链接 `ln -s $(which fdfind) ~/.local/bin/fd`)
+    *   **MacOS:** `brew install fd`
 *   **剪贴板工具:** Linux 下需要 `xclip` 或 `wl-copy`，macOS 自带 `pbcopy` (配置已启用 `unnamedplus` 以支持系统剪贴板)。
 
 ### LSP 语言服务器

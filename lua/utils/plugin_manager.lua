@@ -1,5 +1,61 @@
 local M = {}
 
+-- 存储加载时间数据
+M.stats = {}
+
+-- 记录函数
+function M.record_load_time(name, time_ms)
+	table.insert(M.stats, { name = name, time = time_ms })
+end
+
+-- 展示函数
+function M.show_load_times()
+	local stats = {}
+	-- 复制一份数据以免修改原始记录（虽然这里没关系，但好习惯）
+	for _, s in ipairs(M.stats) do
+		table.insert(stats, s)
+	end
+
+	table.sort(stats, function(a, b) return a.time > b.time end)
+
+	local lines = { "Plugin Config Load Times (ms)", string.rep("=", 40) }
+	local total = 0
+	for _, stat in ipairs(stats) do
+		table.insert(lines, string.format("%-30s : %8.2f ms", stat.name, stat.time))
+		total = total + stat.time
+	end
+	table.insert(lines, string.rep("-", 40))
+	table.insert(lines, string.format("%-30s : %8.2f ms", "Total Recorded", total))
+	table.insert(lines, "")
+	table.insert(lines, "Press 'q' to close")
+
+	-- 创建缓冲区
+	local buf = vim.api.nvim_create_buf(false, true)
+	vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+
+	-- 计算窗口尺寸
+	local width = 50
+	local height = math.min(#lines + 2, vim.o.lines - 4)
+
+	-- 打开浮动窗口
+	local win = vim.api.nvim_open_win(buf, true, {
+		relative = "editor",
+		width = width,
+		height = height,
+		col = (vim.o.columns - width) / 2,
+		row = (vim.o.lines - height) / 2,
+		style = "minimal",
+		border = "rounded",
+		title = " Startup Profile ",
+		title_pos = "center",
+	})
+
+	-- 设置高亮和快捷键
+	vim.api.nvim_set_option_value("filetype", "checkhealth", { buf = buf }) -- 借用 checkhealth 的高亮
+	vim.keymap.set("n", "q", ":close<CR>", { buffer = buf, silent = true })
+	vim.keymap.set("n", "<Esc>", ":close<CR>", { buffer = buf, silent = true })
+end
+
 -- 检查插件健康状况
 function M.check_health()
 	vim.cmd("checkhealth")
@@ -68,3 +124,4 @@ function M.reinstall_all()
 end
 
 return M
+

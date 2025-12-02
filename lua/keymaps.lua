@@ -68,4 +68,8 @@ vim.keymap.set("n", "<leader>ph", function()
 	require("utils.plugin_manager").check_health()
 end, { desc = "检查健康状况 (CheckHealth)" })
 
+vim.keymap.set("n", "<leader>pp", function()
+	require("utils.plugin_manager").show_load_times()
+end, { desc = "显示插件启动耗时" })
+
 
