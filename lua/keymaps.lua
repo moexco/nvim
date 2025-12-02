@@ -72,4 +72,9 @@ vim.keymap.set("n", "<leader>pp", function()
 	require("utils.plugin_manager").show_load_times()
 end, { desc = "显示插件启动耗时" })
 
+-- 版本检查快捷键
+vim.keymap.set("n", "<leader>pv", function()
+	require("utils.version_checker").show_version_info()
+end, { desc = "显示版本信息与更新检查" })
+
 

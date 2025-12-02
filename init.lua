@@ -18,3 +18,6 @@ require("lsp.restart_lsp")
 
 -- 加载自定义补全配置
 require("utils.completion_loader").setup()
+
+-- 启动时自动检查配置更新
+require("utils.version_checker").check_startup()
