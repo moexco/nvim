@@ -14,6 +14,7 @@ local plugins = {
 	{ "https://github.com/nvim-lua/plenary.nvim" },
 	{ "https://github.com/MunifTanjim/nui.nvim" },
 
+	{ "https://github.com/stevearc/dressing.nvim",     config = "config.dressing" },
 	{ "https://github.com/Mofiqul/dracula.nvim",       config = "config.dracula" },
 	{ "https://github.com/folke/noice.nvim",           config = "config.noice" },
 	{ "https://github.com/akinsho/bufferline.nvim",    config = "config.bufferline" },

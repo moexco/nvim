@@ -107,6 +107,21 @@ function M.show_lsp_info()
 		end
 	end
 
+    -- Check for Tools if filetype is supported
+    if vim.bo.filetype == "go" or vim.bo.filetype == "rust" then
+        local tools_manager = require("lsp.tools_manager")
+        local tools_status = tools_manager.get_tool_status(vim.bo.filetype)
+        if #tools_status > 0 then
+            table.insert(info_lines, (vim.bo.filetype:gsub("^%l", string.upper)) .. " Tools Status:")
+            table.insert(info_lines, "----------------")
+            for _, tool in ipairs(tools_status) do
+                local status_icon = tool.installed and "✓" or "✗"
+                table.insert(info_lines, string.format("%s %s", status_icon, tool.name))
+            end
+            table.insert(info_lines, "")
+        end
+    end
+
 	local max_width = 0
 	for _, line in ipairs(info_lines) do
 		local len = vim.fn.strwidth(line)

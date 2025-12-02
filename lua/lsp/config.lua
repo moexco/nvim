@@ -2,6 +2,9 @@
 -- 该文件用于配置和启动 LSP 客户端
 
 local lsp_utils = require("lsp.utils")
+local tools_manager = require("lsp.tools_manager")
+tools_manager.setup()
+
 -- 获取 cmp-nvim-lsp 提供的默认能力集 (用于告知 LSP 服务器我们支持补全、代码片段等)
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
@@ -126,6 +129,12 @@ vim.api.nvim_create_autocmd("FileType", {
 	pattern = { "rust", "go", "lua" }, -- 扩展支持的文件类型
 	callback = function(args)
 		local filetype = vim.bo[args.buf].filetype
+
+		-- 自动检查工具
+		if filetype == "go" or filetype == "rust" then
+			tools_manager.check_and_install(filetype, false)
+		end
+
 		local server_config = servers[filetype] -- Directly use filetype as key
 
 		if server_config then
