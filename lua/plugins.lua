@@ -41,7 +41,7 @@ local plugins = {
 		"https://github.com/nvim-tree/nvim-tree.lua",
 		config = "config.nvimtree",
 		keys = { { "n", "<leader>e" } }, -- 仅定义触发键，具体命令由 config 定义
-		cmd = { "NvimTreeToggle", "NvimTreeFocus", "NvimTreeFindFile" },
+		cmd = { "NvimTreeToggle", "NvimTreeFocus", "NvimTreeFindFile", "NvimTreeFindFileToggle" },
 	},
 	{
 		"https://github.com/akinsho/toggleterm.nvim",
