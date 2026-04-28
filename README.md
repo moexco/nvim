@@ -79,7 +79,7 @@ alias moevim="NVIM_APPNAME=moevim nvim"
 git clone https://github.com/moexco/nvim ~/.config/moevim
 ```
 
-**注意:** 首次启动 `moevim` 时，它会像全新安装一样重新下载所有插件。如果遇到插件下载不完整导致报错（如 `module 'luasnip' not found`），可以使用内置的插件管理修复功能（快捷键 `<leader>p`）或手动清除 `~/.local/share/moevim` 目录。
+**注意:** 首次启动 `moevim` 时，它会像全新安装一样重新下载所有插件。如果遇到插件下载不完整导致报错（如补全插件模块无法加载），可以使用内置的插件管理修复功能（快捷键 `<leader>p`）或手动清除 `~/.local/share/moevim` 目录。
 
 
 ## ⌨️ 常用快捷键概览

@@ -5,110 +5,25 @@ local lsp_utils = require("lsp.utils")
 local tools_manager = require("lsp.tools_manager")
 tools_manager.setup()
 
--- 获取 cmp-nvim-lsp 提供的默认能力集 (用于告知 LSP 服务器我们支持补全、代码片段等)
-local capabilities = require('cmp_nvim_lsp').default_capabilities()
-
--- 通用的根目录查找函数
--- 尝试查找 git 仓库根目录，如果没有则返回当前文件所在目录
-local find_project_root = function()
-	local current_dir = vim.fn.expand("%:p:h")
-	local git_root = vim.fn.systemlist("git -C " ..
-	vim.fn.shellescape(current_dir) .. " rev-parse --show-toplevel 2>/dev/null")[1]
-	if git_root ~= "" and vim.v.shell_error == 0 then
-		return git_root
-	end
-	return current_dir
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+local ok_blink, blink = pcall(require, "blink.cmp")
+if ok_blink then
+	capabilities = blink.get_lsp_capabilities(capabilities)
 end
 
--- LSP 客户端配置表
-local servers = {
-	rust = { -- Changed key from rust_analyzer to rust for filetype matching
-		cmd = { "rust-analyzer" },
-		settings = {
-			["rust-analyzer"] = {
-				inlayHints = {
-					enable = true,
-				},
-				procMacro = {
-					enable = true,
-				},
-			},
-		},
-		root_dir = function(fname)
-			-- Use the specific rust root finder
-			return require("lsp.utils").find_rust_root()
-		end,
-	},
-	go = { -- Key for go filetype
-		cmd = { "gopls" },
-		settings = {
-			gopls = {
-				completeUnimported = true,
-				usePlaceholders = true,
-				analyses = {
-					unusedparams = true,
-					-- 开启 staticcheck 类似 golangci-lint 的静态分析
-					staticcheck = true,
-				},
-				-- 使用 gofumpt (更严格的 gofmt)
-				gofumpt = true,
-			},
-		},
-		root_dir = function(fname)
-			-- For Go, gopls typically finds its root based on go.mod or current dir
-			local go_mod_root = vim.fn.systemlist("go env GOMOD 2>/dev/null")[1]
-			if go_mod_root ~= "" then
-				return vim.fn.fnamemodify(go_mod_root, ":h")
-			end
-			return find_project_root()
-		end,
-	},
-	lua = { -- Key for lua filetype
-		cmd = { "lua-language-server" },
-		settings = {
-			Lua = {
-				workspace = {
-					checkThirdParty = false,
-				},
-				telemetry = {
-					enable = false,
-				},
-			},
-		},
-		root_dir = function(fname)
-			-- For Lua, try to find a project root by looking for common config files or git root
-			local current_dir = vim.fn.expand("%:p:h")
-			local config_files = { ".luacheckrc", ".stylua.toml", "sumneko-lua-ls.lua", ".git" }
-			for _, file in ipairs(config_files) do
-				local path = current_dir
-				while path do
-					if vim.fn.isdirectory(path .. "/" .. file) == 1 or vim.fn.filereadable(path .. "/" .. file) == 1 then
-						return path
-					end
-					local parent_dir = vim.fn.fnamemodify(path, ":h")
-					if parent_dir == path then
-						break
-					end
-					path = parent_dir
-				end
-			end
-			return current_dir
-		end,
-	},
-	-- Add more servers here if needed
-}
-
 -- LSP 和诊断UI设置
--- 设置诊断显示符号
-vim.fn.sign_define("LspDiagnosticsSignError", { text = "", texthl = "LspDiagnosticsSignError" })
-vim.fn.sign_define("LspDiagnosticsSignWarning", { text = "", texthl = "LspDiagnosticsSignWarning" })
-vim.fn.sign_define("LspDiagnosticsSignInformation", { text = "", texthl = "LspDiagnosticsSignInformation" })
-vim.fn.sign_define("LspDiagnosticsSignHint", { text = "💡", texthl = "LspDiagnosticsSignHint" })
-
--- 设置诊断悬浮窗口的配置
 vim.diagnostic.config({
 	virtual_text = true,
 	update_in_insert = false,
+	severity_sort = true,
+	signs = {
+		text = {
+			[vim.diagnostic.severity.ERROR] = "",
+			[vim.diagnostic.severity.WARN] = "",
+			[vim.diagnostic.severity.INFO] = "",
+			[vim.diagnostic.severity.HINT] = "💡",
+		},
+	},
 	float = {
 		source = "always",
 		focusable = false,
@@ -127,40 +42,87 @@ end, { desc = "显示 LSP 客户端信息 (浮动窗口)" })
 -- 创建一个 AutoCommand Group，方便管理和清除
 local lsp_augroup = vim.api.nvim_create_augroup("CustomLspConfig", { clear = true })
 
--- 当打开支持 LSP 的文件时，尝试启动相应的 LSP 客户端
+vim.lsp.config("*", {
+	capabilities = capabilities,
+})
+
+vim.lsp.config("rust_analyzer", {
+	cmd = { "rust-analyzer" },
+	filetypes = { "rust" },
+	root_markers = { "Cargo.toml", "rust-project.json", ".git" },
+	workspace_required = false,
+	settings = {
+		["rust-analyzer"] = {
+			inlayHints = {
+				enable = true,
+			},
+			procMacro = {
+				enable = true,
+			},
+		},
+	},
+})
+
+vim.lsp.config("gopls", {
+	cmd = { "gopls" },
+	filetypes = { "go", "gomod", "gowork" },
+	root_markers = { "go.work", "go.mod", ".git" },
+	workspace_required = false,
+	settings = {
+		gopls = {
+			completeUnimported = true,
+			usePlaceholders = true,
+			analyses = {
+				unusedparams = true,
+				staticcheck = true,
+			},
+			gofumpt = true,
+		},
+	},
+})
+
+vim.lsp.config("lua_ls", {
+	cmd = { "lua-language-server" },
+	filetypes = { "lua" },
+	root_markers = { { ".luarc.json", ".luarc.jsonc" }, ".stylua.toml", ".git" },
+	workspace_required = false,
+	settings = {
+		Lua = {
+			workspace = {
+				checkThirdParty = false,
+			},
+			telemetry = {
+				enable = false,
+			},
+		},
+	},
+})
+
 vim.api.nvim_create_autocmd("FileType", {
 	group = lsp_augroup,
-	pattern = { "rust", "go", "lua" }, -- 扩展支持的文件类型
+	pattern = { "rust", "go" },
 	callback = function(args)
 		local filetype = vim.bo[args.buf].filetype
-
-		-- 自动检查工具
 		if filetype == "go" or filetype == "rust" then
 			tools_manager.check_and_install(filetype, false)
 		end
-
-		local server_config = servers[filetype] -- Directly use filetype as key
-
-		if server_config then
-			local root_dir_func = server_config.root_dir or find_project_root
-			local root_dir = root_dir_func(vim.api.nvim_buf_get_name(args.buf))
-
-			vim.lsp.start({
-				name = filetype,
-				cmd = server_config.cmd,
-				settings = server_config.settings,
-				root_dir = root_dir,
-				capabilities = capabilities, -- 注入 capabilities，解决诊断不同步问题
-				on_attach = function(client, bufnr)
-					-- Go 特有的保存自动动作
-					if filetype == "go" then
-						lsp_utils.setup_go_organize_imports(bufnr)
-					end
-
-					lsp_utils.on_attach(client, bufnr)
-				end,
-				bufnr = args.buf,
-			})
-		end
 	end,
 })
+
+vim.api.nvim_create_autocmd("LspAttach", {
+	group = lsp_augroup,
+	callback = function(args)
+		local client = vim.lsp.get_client_by_id(args.data.client_id)
+		if not client then
+			return
+		end
+
+		if client.name == "gopls" then
+			lsp_utils.setup_go_organize_imports(args.buf)
+		end
+
+		lsp_utils.on_attach(client, args.buf)
+	end,
+})
+
+vim.lsp.enable({ "rust_analyzer", "gopls", "lua_ls" })

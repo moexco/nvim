@@ -2,79 +2,97 @@
 
 local M = {}
 
--- [[ 1. 最终的、纯原生 Lua 根目录查找函数 ]]
-M.find_rust_root = function()
-	-- 获取当前文件所在的目录
-	local current_dir = vim.fn.expand("%:p:h")
-
-	while current_dir do
-		-- 检查是否存在 Cargo.toml 文件 (使用 filereadable 检查文件是否存在)
-		if vim.fn.filereadable(current_dir .. "/Cargo.toml") == 1 then
-			return current_dir
-		end
-
-		-- 向上查找父目录 (使用 fnamemodify(':h') 实现)
-		local parent_dir = vim.fn.fnamemodify(current_dir, ":h")
-
-		-- 如果父目录和当前目录相同 (例如在文件系统根目录 '/'), 则停止
-		if parent_dir == current_dir then
-			break
-		end
-
-		current_dir = parent_dir
-	end
-
-	-- 最终 fallback 到当前文件所在的目录
-	return vim.fn.expand("%:p:h")
-end
-
--- [[ 2. 通用的 on_attach 函数 (保持不变) ]]
 M.on_attach = function(client, bufnr)
 	local opts = { noremap = true, silent = true, buffer = bufnr }
 
-	local telescope_builtin = require("telescope.builtin")
+	local function telescope_or(method, fallback)
+		return function()
+			local ok, telescope_builtin = pcall(require, "telescope.builtin")
+			if ok and telescope_builtin[method] then
+				telescope_builtin[method]()
+				return
+			end
+			fallback()
+		end
+	end
+
+	if client:supports_method("textDocument/inlayHint") then
+		vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+	end
 
 	-- 常用的 LSP 快捷键映射...
-	-- local telescope_builtin = require("telescope.builtin") -- 暂时注释掉，因为 Telescope LSP 扩展未加载
-	vim.keymap.set("n", "K", vim.lsp.buf.hover, { noremap = true, silent = true, buffer = bufnr, desc = "显示悬浮文档" })
-	vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help,
-		{ noremap = true, silent = true, buffer = bufnr, desc = "显示函数签名" })
-	vim.keymap.set("n", "<leader>lr", vim.lsp.buf.rename,
-		{ noremap = true, silent = true, buffer = bufnr, desc = "LSP 重命名" })
-	vim.keymap.set("n", "<leader>lc", vim.lsp.buf.code_action,
-		{ noremap = true, silent = true, buffer = bufnr, desc = "LSP 代码动作" })
+	vim.keymap.set(
+		"n",
+		"K",
+		vim.lsp.buf.hover,
+		{ noremap = true, silent = true, buffer = bufnr, desc = "显示悬浮文档" }
+	)
+	vim.keymap.set(
+		"n",
+		"<C-k>",
+		vim.lsp.buf.signature_help,
+		{ noremap = true, silent = true, buffer = bufnr, desc = "显示函数签名" }
+	)
+	vim.keymap.set(
+		"n",
+		"<leader>lr",
+		vim.lsp.buf.rename,
+		{ noremap = true, silent = true, buffer = bufnr, desc = "LSP 重命名" }
+	)
+	vim.keymap.set(
+		"n",
+		"<leader>lc",
+		vim.lsp.buf.code_action,
+		{ noremap = true, silent = true, buffer = bufnr, desc = "LSP 代码动作" }
+	)
 
 	-- LSP Go To 系列快捷键 (G 开头)
-	vim.keymap.set("n", "gd", telescope_builtin.lsp_definitions,
-		{ noremap = true, silent = true, buffer = bufnr, desc = "跳转到定义 (Telescope)" })
-	vim.keymap.set("n", "gD", vim.lsp.buf.declaration,
-		{ noremap = true, silent = true, buffer = bufnr, desc = "跳转到声明" })
-	vim.keymap.set("n", "gi", telescope_builtin.lsp_implementations,
-		{ noremap = true, silent = true, buffer = bufnr, desc = "跳转到实现 (Telescope)" })
-	vim.keymap.set("n", "gt", telescope_builtin.lsp_type_definitions,
-		{ noremap = true, silent = true, buffer = bufnr, desc = "跳转到类型定义 (Telescope)" })
-	vim.keymap.set("n", "gr", telescope_builtin.lsp_references,
-		{ noremap = true, silent = true, buffer = bufnr, desc = "查找引用 (Telescope)" })
-
+	vim.keymap.set(
+		"n",
+		"gd",
+		telescope_or("lsp_definitions", vim.lsp.buf.definition),
+		{ noremap = true, silent = true, buffer = bufnr, desc = "跳转到定义 (Telescope)" }
+	)
+	vim.keymap.set(
+		"n",
+		"gD",
+		vim.lsp.buf.declaration,
+		{ noremap = true, silent = true, buffer = bufnr, desc = "跳转到声明" }
+	)
+	vim.keymap.set(
+		"n",
+		"gi",
+		telescope_or("lsp_implementations", vim.lsp.buf.implementation),
+		{ noremap = true, silent = true, buffer = bufnr, desc = "跳转到实现 (Telescope)" }
+	)
+	vim.keymap.set(
+		"n",
+		"gt",
+		telescope_or("lsp_type_definitions", vim.lsp.buf.type_definition),
+		{ noremap = true, silent = true, buffer = bufnr, desc = "跳转到类型定义 (Telescope)" }
+	)
+	vim.keymap.set(
+		"n",
+		"gr",
+		telescope_or("lsp_references", vim.lsp.buf.references),
+		{ noremap = true, silent = true, buffer = bufnr, desc = "查找引用 (Telescope)" }
+	)
 
 	-- 诊断快捷键
-	vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
-	vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
-
-	-- 启用 nvim-cmp 的缓冲区本地设置
-	-- 这会为每个 LSP 附加的缓冲区启用自动补全
-	require("cmp").setup.buffer({
-		sources = {
-			{ name = "nvim_lsp" },
-			{ name = "luasnip" },
-			{ name = "buffer" },
-			{ name = "path" },
-		},
-	})
+	vim.keymap.set("n", "[d", function()
+		vim.diagnostic.jump({ count = -1, float = true })
+	end, opts)
+	vim.keymap.set("n", "]d", function()
+		vim.diagnostic.jump({ count = 1, float = true })
+	end, opts)
 
 	-- Rust 独有的快捷键
 	vim.keymap.set("n", "<leader>lR", function()
-		vim.cmd("RustLsp runnables")
+		if vim.fn.exists(":RustLsp") == 2 then
+			vim.cmd("RustLsp runnables")
+			return
+		end
+		vim.lsp.buf.code_action()
 	end, { noremap = true, silent = true, buffer = bufnr, desc = "RustLSP 可运行项" })
 end
 
@@ -92,35 +110,33 @@ function M.show_lsp_info()
 		for _, client in ipairs(clients) do
 			table.insert(info_lines, string.format("ID: %d", client.id))
 			table.insert(info_lines, string.format("Name: %s", client.name))
-			table.insert(info_lines,
-				string.format("Root: %s", client.config and client.config.root_dir or "N/A"))
+			table.insert(info_lines, string.format("Root: %s", client.config and client.config.root_dir or "N/A"))
 			table.insert(
 				info_lines,
 				string.format("Status: %s", client.server_capabilities and "Ready" or "Initializing")
 			)
 			table.insert(
 				info_lines,
-				string.format("Autostart: %s",
-					client.config and client.config.autostart and "Yes" or "No")
+				string.format("Autostart: %s", client.config and client.config.autostart and "Yes" or "No")
 			)
 			table.insert(info_lines, "") -- Add a blank line for readability
 		end
 	end
 
-    -- Check for Tools if filetype is supported
-    if vim.bo.filetype == "go" or vim.bo.filetype == "rust" then
-        local tools_manager = require("lsp.tools_manager")
-        local tools_status = tools_manager.get_tool_status(vim.bo.filetype)
-        if #tools_status > 0 then
-            table.insert(info_lines, (vim.bo.filetype:gsub("^%l", string.upper)) .. " Tools Status:")
-            table.insert(info_lines, "----------------")
-            for _, tool in ipairs(tools_status) do
-                local status_icon = tool.installed and "✓" or "✗"
-                table.insert(info_lines, string.format("%s %s", status_icon, tool.name))
-            end
-            table.insert(info_lines, "")
-        end
-    end
+	-- Check for Tools if filetype is supported
+	if vim.bo.filetype == "go" or vim.bo.filetype == "rust" then
+		local tools_manager = require("lsp.tools_manager")
+		local tools_status = tools_manager.get_tool_status(vim.bo.filetype)
+		if #tools_status > 0 then
+			table.insert(info_lines, (vim.bo.filetype:gsub("^%l", string.upper)) .. " Tools Status:")
+			table.insert(info_lines, "----------------")
+			for _, tool in ipairs(tools_status) do
+				local status_icon = tool.installed and "✓" or "✗"
+				table.insert(info_lines, string.format("%s %s", status_icon, tool.name))
+			end
+			table.insert(info_lines, "")
+		end
+	end
 
 	local max_width = 0
 	for _, line in ipairs(info_lines) do
@@ -130,7 +146,7 @@ function M.show_lsp_info()
 		end
 	end
 
-	local height = #info_lines + 2                    -- +2 for padding
+	local height = #info_lines + 2 -- +2 for padding
 	local width = math.min(max_width + 4, vim.o.columns - 4) -- +4 for padding, limit width
 
 	local row = math.floor((vim.o.lines - height) / 2)
@@ -163,7 +179,11 @@ end
 
 -- [[ 4. Go Organize Imports 辅助函数 ]]
 function M.setup_go_organize_imports(bufnr)
+	local group = vim.api.nvim_create_augroup("CustomGoOrganizeImports", { clear = false })
+	vim.api.nvim_clear_autocmds({ group = group, buffer = bufnr })
+
 	vim.api.nvim_create_autocmd("BufWritePre", {
+		group = group,
 		buffer = bufnr,
 		callback = function()
 			-- 1. 组织 imports (移除未使用的, 排序)
@@ -179,10 +199,9 @@ function M.setup_go_organize_imports(bufnr)
 				end
 			end
 			-- 2. 格式化
-			vim.lsp.buf.format({ async = false })
+			vim.lsp.buf.format({ async = false, bufnr = bufnr })
 		end,
 	})
 end
 
 return M
-

@@ -7,10 +7,11 @@ require("noice").setup({
 			enabled = true,
 			view = "mini",
 		},
-		override = {
-			["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-			["vim.lsp.util.stylize_markdown"] = true,
-			["cmp.entry.get_documentation"] = true,
+		hover = {
+			enabled = false,
+		},
+		signature = {
+			enabled = false,
 		},
 	},
 	presets = {
@@ -22,3 +23,13 @@ require("noice").setup({
 	},
 })
 
+local ok, treesitter = pcall(require, "noice.text.treesitter")
+if ok then
+	local has_lang = treesitter.has_lang
+	treesitter.has_lang = function(lang)
+		if lang == "vim" then
+			return false
+		end
+		return has_lang(lang)
+	end
+end

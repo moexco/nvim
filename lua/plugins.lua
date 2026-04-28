@@ -14,18 +14,17 @@ local plugins = {
 	{ "https://github.com/nvim-lua/plenary.nvim" },
 	{ "https://github.com/MunifTanjim/nui.nvim" },
 
-	{ "https://github.com/stevearc/dressing.nvim",     config = "config.dressing" },
-	{ "https://github.com/Mofiqul/dracula.nvim",       config = "config.dracula" },
-	{ "https://github.com/folke/noice.nvim",           config = "config.noice" },
-	{ "https://github.com/akinsho/bufferline.nvim",    config = "config.bufferline" },
-	{ "https://github.com/folke/which-key.nvim",       config = "config.whichkey" },
-	{ "https://github.com/numToStr/Navigator.nvim",    config = "config.navigator" },
+	{ "https://github.com/stevearc/dressing.nvim", config = "config.dressing" },
+	{ "https://github.com/Mofiqul/dracula.nvim", config = "config.dracula" },
+	{ "https://github.com/folke/noice.nvim", config = "config.noice" },
+	{ "https://github.com/akinsho/bufferline.nvim", config = "config.bufferline" },
+	{ "https://github.com/folke/which-key.nvim", config = "config.whichkey" },
+	{ "https://github.com/numToStr/Navigator.nvim", config = "config.navigator" },
 
 	-- [Group C: 打开文件时加载]
 	-- 代码高亮、Git 符号
 	{
 		"https://github.com/nvim-treesitter/nvim-treesitter",
-		deps = { "https://github.com/nvim-treesitter/nvim-treesitter-context" },
 		config = "config.treesitter",
 		event = { "BufReadPost", "BufNewFile" },
 	},
@@ -60,16 +59,12 @@ local plugins = {
 
 	-- 补全与自动对
 	{
-		"https://github.com/hrsh7th/nvim-cmp",
+		{ src = "https://github.com/saghen/blink.cmp", version = vim.version.range("1") },
 		deps = {
-			"https://github.com/hrsh7th/cmp-nvim-lsp",
-			"https://github.com/hrsh7th/cmp-buffer",
-			"https://github.com/hrsh7th/cmp-path",
-			"https://github.com/L3MON4D3/LuaSnip",
-			"https://github.com/saadparwaiz1/cmp_luasnip",
+			"https://github.com/rafamadriz/friendly-snippets",
 			"https://github.com/windwp/nvim-autopairs",
 		},
-		config = "completion",
+		config = "completion.blink",
 		event = "InsertEnter",
 	},
 	{
@@ -109,7 +104,9 @@ local pm = require("utils.plugin_manager")
 local loaded_configs = {}
 
 local function load_config(name)
-	if not name or loaded_configs[name] then return end
+	if not name or loaded_configs[name] then
+		return
+	end
 
 	local start_time = vim.loop.hrtime()
 	local ok, err = pcall(require, name)
@@ -142,7 +139,7 @@ local function setup_key_trigger(key_spec, config_name)
 		-- 使用 feedkeys 模拟用户再次按下该键
 		-- 'm' = remap (允许递归映射，这样才能触发刚加载好的插件映射)
 		local keys = vim.api.nvim_replace_termcodes(lhs, true, false, true)
-		vim.api.nvim_feedkeys(keys, 'm', true)
+		vim.api.nvim_feedkeys(keys, "m", true)
 	end, { desc = "LazyLoad Trigger for " .. config_name })
 end
 
@@ -170,7 +167,9 @@ for _, p in ipairs(plugins) do
 				vim.api.nvim_create_autocmd(p.event, {
 					pattern = "*",
 					once = true,
-					callback = function() load_config(p.config) end,
+					callback = function()
+						load_config(p.config)
+					end,
 				})
 			end
 
@@ -179,7 +178,9 @@ for _, p in ipairs(plugins) do
 				vim.api.nvim_create_autocmd("FileType", {
 					pattern = p.ft,
 					once = true,
-					callback = function() load_config(p.config) end,
+					callback = function()
+						load_config(p.config)
+					end,
 				})
 			end
 
@@ -200,4 +201,3 @@ for _, p in ipairs(plugins) do
 		end
 	end
 end
-
