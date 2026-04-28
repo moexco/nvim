@@ -1,27 +1,25 @@
 -- lua/keymaps.lua
 -- 该文件用于设置全局快捷键
 
-
 -- 禁用 gc 菜单，并将 gc 指向 gcc (切换行注释)
 vim.keymap.set("n", "gc", "gcc", { desc = "切换行注释" })
 
--- 窗口切换 (Ctrl + hjkl)
-vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "切换到左侧窗口" })
-vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "切换到下方窗口" })
-vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "切换到上方窗口" })
-vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "切换到右侧窗口" })
+-- 窗口/终端复用器切换 (Ctrl + hjkl)
+vim.keymap.set("n", "<C-h>", "<cmd>NavigatorLeft<CR>", { desc = "切换到左侧窗口" })
+vim.keymap.set("n", "<C-j>", "<cmd>NavigatorDown<CR>", { desc = "切换到下方窗口" })
+vim.keymap.set("n", "<C-k>", "<cmd>NavigatorUp<CR>", { desc = "切换到上方窗口" })
+vim.keymap.set("n", "<C-l>", "<cmd>NavigatorRight<CR>", { desc = "切换到右侧窗口" })
 
 -- 全局快捷键
 vim.keymap.set("n", "<leader>q", ":qa<CR>", { desc = "关闭所有缓冲区并退出程序" })
 vim.keymap.set("n", "<C-s>", ":w<CR>", { desc = "保存当前缓冲区" })
 vim.keymap.set("n", "<leader>t", "<cmd>ToggleTerm<CR>", { desc = "Toggle bottom terminal" })
 
--- 针对终端模式的窗口切换 (C-hjkl)
--- 't' 模式：在终端插入模式下，先退出终端，再切换窗口
-vim.keymap.set("t", "<C-h>", "<C-\\><C-n><C-w>h", { desc = "终端: 切换到左侧窗口" })
-vim.keymap.set("t", "<C-j>", "<C-\\><C-n><C-w>j", { desc = "终端: 切换到下方窗口" })
-vim.keymap.set("t", "<C-k>", "<C-\\><C-n><C-w>k", { desc = "终端: 切换到上方窗口" })
-vim.keymap.set("t", "<C-l>", "<C-\\><C-n><C-w>l", { desc = "终端: 切换到右侧窗口" })
+-- 针对终端模式的窗口/终端复用器切换 (C-hjkl)
+vim.keymap.set("t", "<C-h>", "<cmd>NavigatorLeft<CR>", { desc = "终端: 切换到左侧窗口" })
+vim.keymap.set("t", "<C-j>", "<cmd>NavigatorDown<CR>", { desc = "终端: 切换到下方窗口" })
+vim.keymap.set("t", "<C-k>", "<cmd>NavigatorUp<CR>", { desc = "终端: 切换到上方窗口" })
+vim.keymap.set("t", "<C-l>", "<cmd>NavigatorRight<CR>", { desc = "终端: 切换到右侧窗口" })
 
 -- Bufferline 快捷键
 vim.keymap.set("n", "<leader>bn", ":BufferLineCycleNext<CR>", { desc = "切换到下一个缓冲区", silent = true })
@@ -64,5 +62,3 @@ end, { desc = "显示插件启动耗时" })
 vim.keymap.set("n", "<leader>pv", function()
 	require("utils.version_checker").show_version_info()
 end, { desc = "显示版本信息与更新检查" })
-
-
