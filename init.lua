@@ -10,6 +10,9 @@ require("plugins")
 -- 加载全局快捷键
 require("keymaps")
 
+-- 加载 Review Mode
+require("config.review")
+
 -- 加载 LSP (语言服务器协议) 相关配置
 require("lsp.config")
 

@@ -25,9 +25,9 @@ local function setup_file_preview_highlights()
 	vim.api.nvim_set_hl(0, "MoevimGitPreviewAddLine", { bg = "#263b31" })
 	vim.api.nvim_set_hl(0, "MoevimGitPreviewChangeLine", { bg = "#233244" })
 	vim.api.nvim_set_hl(0, "MoevimGitPreviewDeleteLine", { bg = "#4a2830" })
-	vim.api.nvim_set_hl(0, "MoevimGitPreviewAddText", { fg = "#50fa7b", bold = true })
-	vim.api.nvim_set_hl(0, "MoevimGitPreviewChangeText", { fg = "#8be9fd", bold = true })
-	vim.api.nvim_set_hl(0, "MoevimGitPreviewDeleteText", { fg = "#ff6e6e", bold = true })
+	vim.api.nvim_set_hl(0, "MoevimGitPreviewAddText", { fg = "#50fa7b" })
+	vim.api.nvim_set_hl(0, "MoevimGitPreviewChangeText", { fg = "#8be9fd" })
+	vim.api.nvim_set_hl(0, "MoevimGitPreviewDeleteText", { fg = "#ff6e6e" })
 	vim.api.nvim_set_hl(0, "MoevimGitPreviewAddVirt", { fg = "#50fa7b", bg = "#263b31" })
 	vim.api.nvim_set_hl(0, "MoevimGitPreviewChangeVirt", { fg = "#8be9fd", bg = "#233244" })
 	vim.api.nvim_set_hl(0, "MoevimGitPreviewDeleteVirt", { fg = "#ff6e6e", bg = "#4a2830" })
@@ -107,6 +107,23 @@ local function toggle_file_preview()
 		end
 	end
 end
+
+vim.api.nvim_create_user_command("GitFilePreviewEnable", function()
+	local bufnr = vim.api.nvim_get_current_buf()
+	if not has_file_preview(bufnr) then
+		toggle_file_preview()
+	end
+end, { desc = "Enable current file Git diff preview" })
+
+vim.api.nvim_create_user_command("GitFilePreviewDisable", function()
+	clear_file_preview(vim.api.nvim_get_current_buf())
+end, { desc = "Disable current file Git diff preview" })
+
+vim.api.nvim_create_user_command(
+	"GitFilePreviewToggle",
+	toggle_file_preview,
+	{ desc = "Toggle current file Git diff preview" }
+)
 
 map("n", "]g", function()
 	if vim.wo.diff then
