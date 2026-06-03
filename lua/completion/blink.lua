@@ -20,8 +20,8 @@ require("blink.cmp").setup({
 		["<C-k>"] = { "select_prev", "snippet_backward", "fallback" },
 		["<C-b>"] = { "scroll_documentation_up", "fallback" },
 		["<C-f>"] = { "scroll_documentation_down", "fallback" },
-		["<Tab>"] = { "snippet_forward", "fallback" },
-		["<S-Tab>"] = { "snippet_backward", "fallback" },
+		["<Tab>"] = { "select_next", "snippet_forward", "fallback" },
+		["<S-Tab>"] = { "select_prev", "snippet_backward", "fallback" },
 	},
 	appearance = {
 		nerd_font_variant = "mono",
@@ -47,6 +47,9 @@ require("blink.cmp").setup({
 	},
 	sources = {
 		default = { "lsp", "snippets", "path", "buffer" },
+		per_filetype = {
+			DressingInput = {},
+		},
 	},
 	snippets = {
 		preset = "default",
@@ -61,3 +64,11 @@ require("blink.cmp").setup({
 		implementation = "lua",
 	},
 })
+
+vim.api.nvim_create_autocmd("InsertLeave", {
+	desc = "清理 snippet 状态，防止 Tab 追踪累积",
+	callback = function()
+		pcall(vim.snippet.stop)
+	end,
+})
+

@@ -24,7 +24,19 @@ vim.keymap.set("t", "<C-l>", "<cmd>NavigatorRight<CR>", { desc = "终端: 切换
 -- Bufferline 快捷键
 vim.keymap.set("n", "<leader>bn", ":BufferLineCycleNext<CR>", { desc = "切换到下一个缓冲区", silent = true })
 vim.keymap.set("n", "<leader>bp", ":BufferLineCyclePrev<CR>", { desc = "切换到上一个缓冲区", silent = true })
-vim.keymap.set("n", "<leader>bd", ":bdelete!<CR>", { desc = "关闭当前缓冲区", silent = true })
+vim.keymap.set("n", "<leader>bd", function()
+	local cur = vim.api.nvim_get_current_buf()
+	for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+		if buf ~= cur and vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].buflisted and vim.bo[buf].buftype == "" then
+			vim.api.nvim_win_set_buf(0, buf)
+			vim.api.nvim_buf_delete(cur, { force = true })
+			return
+		end
+	end
+	vim.api.nvim_buf_set_name(cur, "")
+	vim.api.nvim_buf_set_lines(cur, 0, -1, true, { "" })
+	vim.bo[cur].modified = false
+end, { desc = "关闭当前缓冲区", silent = true })
 
 -- 自定义缓冲区导航快捷键
 vim.keymap.set("n", "[b", ":BufferLineCyclePrev<CR>", { desc = "切换到上一个缓冲区", silent = true })

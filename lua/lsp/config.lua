@@ -5,6 +5,8 @@ local lsp_utils = require("lsp.utils")
 local tools_manager = require("lsp.tools_manager")
 tools_manager.setup()
 
+local diagnostic_result_ids = {}
+
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 local ok_blink, blink = pcall(require, "blink.cmp")
 if ok_blink then
@@ -122,6 +124,44 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		end
 
 		lsp_utils.on_attach(client, args.buf)
+	end,
+})
+
+vim.api.nvim_create_autocmd("BufWritePost", {
+	group = lsp_augroup,
+	pattern = "*",
+	desc = "保存后清除陈旧诊断，触发服务器重新推送",
+	callback = function(args)
+		local bufnr = args.buf
+		vim.defer_fn(function()
+			if not vim.api.nvim_buf_is_valid(bufnr) then
+				return
+			end
+			local clients = vim.lsp.get_clients({ bufnr = bufnr })
+			if #clients == 0 then
+				return
+			end
+
+			vim.diagnostic.reset(nil, bufnr)
+
+			for _, client in ipairs(clients) do
+				if client:supports_method("textDocument/diagnostic") then
+					local key = bufnr .. ":" .. client.id
+					local params = {
+						textDocument = vim.lsp.util.make_text_document_params(bufnr),
+					}
+					local previousResultId = diagnostic_result_ids[key]
+					if previousResultId then
+						params.previousResultId = previousResultId
+					end
+					client:request("textDocument/diagnostic", params, function(_, result, _)
+						if result and result.resultId then
+							diagnostic_result_ids[key] = result.resultId
+						end
+					end, bufnr)
+				end
+			end
+		end, 200)
 	end,
 })
 

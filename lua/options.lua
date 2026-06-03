@@ -11,6 +11,7 @@ vim.opt.swapfile = false -- 禁用交换文件
 vim.opt.signcolumn = "yes"
 vim.opt.clipboard = "unnamedplus" -- Enable system clipboard (OSC 52)
 vim.opt.winborder = "rounded"
+vim.opt.hidden = true
 
 -- 全局变量
 vim.g.mapleader = " " -- 将 Leader 键设置为 <Space> (空格键)

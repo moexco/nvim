@@ -35,7 +35,7 @@ local plugins = {
 	},
 
 	-- [Group D: 按需交互加载]
-	-- 搜索、文件树、终端、补全
+	-- 搜索、文件树、终端、AI、补全
 	{
 		"https://github.com/nvim-tree/nvim-tree.lua",
 		config = "config.nvimtree",
@@ -55,6 +55,36 @@ local plugins = {
 		-- Telescope 快捷键较多，通常在 keymaps.lua 或 config.telescope 定义
 		-- 这里为了简单，我们在打开文件时也预加载它，或者等待命令触发
 		event = "BufReadPre",
+	},
+	{
+		{ src = "https://github.com/olimorris/codecompanion.nvim", version = vim.version.range("^19.0.0") },
+		config = "config.codecompanion",
+		cmd = {
+			"CodeCompanion",
+			"CodeCompanionActions",
+			"CodeCompanionChat",
+			"CodeCompanionCLI",
+			"CodeCompanionCmd",
+			"CodeCompanionCodexAuth",
+			"CodeCompanionCodexCLI",
+			"CodeCompanionCodexResume",
+			"CodeCompanionStatus",
+		},
+		keys = {
+			{ "n", "<leader>aa" },
+			{ "v", "<leader>aa" },
+			{ "n", "<leader>ac" },
+			{ "v", "<leader>ac" },
+			{ "n", "<leader>ad" },
+			{ "n", "<leader>ai" },
+			{ "v", "<leader>ai" },
+			{ "n", "<leader>al" },
+			{ "n", "<leader>ap" },
+			{ "v", "<leader>ap" },
+			{ "n", "<leader>ar" },
+			{ "n", "<leader>as" },
+			{ "n", "<leader>at" },
+		},
 	},
 
 	-- 补全与自动对
@@ -78,7 +108,7 @@ local plugins = {
 		"https://github.com/MeanderingProgrammer/render-markdown.nvim",
 		deps = { "https://github.com/3rd/image.nvim" },
 		config = "config.markdown",
-		ft = "markdown",
+		ft = { "markdown", "codecompanion" },
 	},
 }
 

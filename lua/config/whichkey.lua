@@ -7,6 +7,16 @@ require("which-key").setup({})
 -- 为 leader 前缀注册描述
 local wk = require("which-key")
 wk.add({
+	{ "<leader>a", group = "AI" },
+	{ "<leader>aa", desc = "AI 动作面板" },
+	{ "<leader>ac", desc = "切换 Codex Chat" },
+	{ "<leader>ad", desc = "发送诊断到 Codex CLI" },
+	{ "<leader>ai", desc = "发送当前上下文到 Codex CLI" },
+	{ "<leader>al", desc = "选择 Codex 登录方式" },
+	{ "<leader>ap", desc = "向 Codex CLI 提问" },
+	{ "<leader>ar", desc = "恢复 Codex 会话" },
+	{ "<leader>as", desc = "显示 AI 状态" },
+	{ "<leader>at", desc = "切换 Codex CLI" },
 	{ "<leader>e", group = "文件树" },
 	{ "<leader>f", group = "查找" },
 	{ "<leader>g", group = "Git" },

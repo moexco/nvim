@@ -5,9 +5,10 @@
 -- https://github.com/MeanderingProgrammer/render-markdown.nvim
 require("render-markdown").setup({
 	-- 启用文件类型
-	file_types = { "markdown" },
+	file_types = { "markdown", "codecompanion" },
+	render_modes = { "n", "i", "c", "t" },
 	-- 可以在这里配置标题符号、高亮等，默认配置通常已足够美观
-    latex = { enabled = false }, -- 默认禁用 latex 以防报错，除非已配置
+	latex = { enabled = false }, -- 默认禁用 latex 以防报错，除非已配置
 })
 
 -- image.nvim 配置

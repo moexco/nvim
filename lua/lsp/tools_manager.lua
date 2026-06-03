@@ -19,6 +19,33 @@ local lang_tools = {
 	},
 }
 
+local function rustup_component_installed(component)
+	local output = vim.fn.systemlist({ "rustup", "component", "list", "--installed" })
+	if vim.v.shell_error ~= 0 then
+		return false
+	end
+
+	for _, line in ipairs(output) do
+		if line == component or line:match("^" .. vim.pesc(component) .. "%-") then
+			return true
+		end
+	end
+
+	return false
+end
+
+local function tool_installed(tool)
+	if tool.type == "go" then
+		return vim.fn.executable(tool.bin) == 1
+	end
+
+	if tool.type == "rustup" then
+		return rustup_component_installed(tool.pkg)
+	end
+
+	return false
+end
+
 function M.setup()
 	-- 通用命令，根据当前文件类型执行检查安装
 	vim.api.nvim_create_user_command("LspInstallTools", function()
@@ -29,26 +56,13 @@ end
 -- 获取指定语言的工具状态列表
 function M.get_tool_status(filetype)
 	local tools = lang_tools[filetype]
-	if not tools then return {} end
+	if not tools then
+		return {}
+	end
 
 	local status = {}
 	for _, tool in ipairs(tools) do
-		local installed = false
-		if tool.type == "go" then
-			installed = vim.fn.executable(tool.bin) == 1
-		elseif tool.type == "rustup" then
-			-- 检查 rustup component list --installed
-			-- 这是一个简单的检查，也可以通过 executable 检查对应的 wrapper
-			-- 通常 rustup 安装后，对应的 binary (如 cargo-clippy, rustfmt) 应该在 PATH 中
-			-- 但 rust-analyzer 有时需要手动加到 PATH，或者由 rustup run 调用
-			-- 这里我们优先检查 binary 是否在 PATH
-			if tool.bin == "cargo-clippy" then
-				-- clippy 通常作为 cargo 子命令运行，检查 cargo-clippy 二进制
-				installed = vim.fn.executable("cargo-clippy") == 1
-			else
-				installed = vim.fn.executable(tool.bin) == 1
-			end
-		end
+		local installed = tool_installed(tool)
 		table.insert(status, { name = tool.bin, installed = installed })
 	end
 	return status
@@ -71,14 +85,8 @@ function M.check_and_install(filetype, force_update)
 		if force_update then
 			is_missing = true
 		else
-			if tool.type == "go" then
-				if vim.fn.executable(tool.bin) == 0 then is_missing = true end
-			elseif tool.type == "rustup" then
-				if tool.bin == "cargo-clippy" then
-					if vim.fn.executable("cargo-clippy") == 0 then is_missing = true end
-				else
-					if vim.fn.executable(tool.bin) == 0 then is_missing = true end
-				end
+			if not tool_installed(tool) then
+				is_missing = true
 			end
 		end
 
